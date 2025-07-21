@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Defence Research Aggregator</title>
+</head>
+<body>
+  <h1>Public Opinion Research on Defence & Security</h1>
+  <ul id="article-list"></ul>
+
+  <script>
+    const rssFeeds = [
+      { name: "Angus Reid", url: "https://angusreid.org/feed/" },
+      { name: "Ipsos Canada", url: "https://www.ipsos.com/en-ca/news-and-events/news/rss" },
+      { name: "Ipsos Global", url: "https://www.ipsos.com/en/rss.xml" }
+    ];
+
+    const keywords = [
+      "defence", "defense", "military", "armed forces",
+      "Canadian Armed Forces", "national defence", "national security"
+    ];
+
+    const feedContainer = document.getElementById("article-list");
+
+    rssFeeds.forEach(feed => {
+      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`)
+        .then(res => res.json())
+        .then(data => {
+          const filtered = data.items.filter(item =>
+            keywords.some(kw =>
+              item.title.toLowerCase().includes(kw.toLowerCase()) ||
+              item.description.toLowerCase().includes(kw.toLowerCase())
+            )
+          );
+
+          filtered.forEach(item => {
+            const li = document.createElement("li");
+            li.innerHTML = `<strong>${feed.name}</strong>: <a href="${item.link}" target="_blank">${item.title}</a>`;
+            feedContainer.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching RSS for", feed.name, error);
+        });
+    });
+  </script>
+</body>
+</html>
