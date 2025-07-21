@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Defence Research News</title>
+</head>
+<body>
+  <h1>Public Opinion Research on Defence</h1>
+  <ul id="rss-feed"></ul>
+
+  <script>
+    const feedUrl = "https://www.nato.int/cps/en/natolive/news_rss.htm"; // Replace with any RSS URL
+
+    fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feedUrl))
+      .then(response => response.json())
+      .then(data => {
+        const feedContainer = document.getElementById("rss-feed");
+        data.items.forEach(item => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${item.link}" target="_blank">${item.title}</a>`;
+          feedContainer.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
